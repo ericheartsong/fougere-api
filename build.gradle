@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+    id 'io.quarkus' version '3.39.1'
+}
+
+group = 'org.ecma'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+// Force Quarkus à lire la version officielle de Gradle pour le tag de l'image
+tasks.withType(io.quarkus.gradle.tasks.QuarkusBuild).configureEach {
+    inputs.property("appVersion", project.version.toString())
+    System.setProperty("quarkus.container-image.tag", project.version.toString())
+}
+
+
+dependencies {
+    // Importe le BOM Quarkus : gère les versions de toutes les extensions Quarkus automatiquement
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-container-image-jib'
+
+    // Dépendance de base pour créer une API REST (RESTEasy Reactive)
+    implementation 'io.quarkus:quarkus-rest'
+
+    // Permet la sérialisation/désérialisation automatique des objets en JSON
+    implementation 'io.quarkus:quarkus-rest-jackson'
+
+    // healthcheck
+    implementation 'io.quarkus:quarkus-smallrye-health'
+
+    // Mongodb support
+    implementation 'io.quarkus:quarkus-mongodb-panache'
+
+    testImplementation platform('org.junit:junit-bom:6.0.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // Dépendances de test standard pour Quarkus
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.rest-assured:rest-assured'
+}
+
+test {
+    useJUnitPlatform()
+}
