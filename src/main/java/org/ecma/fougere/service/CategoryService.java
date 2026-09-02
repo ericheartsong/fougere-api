@@ -1,16 +1,12 @@
 package org.ecma.fougere.service;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import org.ecma.fougere.domain.Category;
 
-@ApplicationScoped
-public class CategoryService {
+import java.util.List;
+import java.util.Optional;
 
-    public Category getCategory() {
-        Category cat = new Category();
-        cat.setCode("AMOV");
-        cat.setName("Adult movie3");
-        cat.setDescription("Adult movie catgory");
-        return cat;
-    }
+public interface CategoryService {
+
+    Optional<Category> getCategory(String idCategory);
+    List<Category> getAll();
 }
