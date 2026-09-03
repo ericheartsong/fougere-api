@@ -10,8 +10,8 @@ import java.util.Optional;
 @ApplicationScoped
 public class CategoryServiceImpl implements CategoryService {
 
-    public Optional<Category> getCategory(String idCategory) {
-        return Category.find("code", idCategory).firstResultOptional();
+    public Optional<Category> getCategoryByCode(String codeCategory) {
+        return Category.find("code", codeCategory).firstResultOptional();
     }
 
     public List<Category> getAll() {
