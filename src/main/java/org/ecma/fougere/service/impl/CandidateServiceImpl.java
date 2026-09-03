@@ -18,8 +18,8 @@ public class CandidateServiceImpl implements CandidateService {
 
 
     @Override
-    public Optional<Candidate> getCandidateById(String id) {
-        return Candidate.findByIdOptional(new ObjectId(id));
+    public Optional<Candidate> getCandidateById(ObjectId id) {
+        return Candidate.findByIdOptional(id);
     }
 
     @Override

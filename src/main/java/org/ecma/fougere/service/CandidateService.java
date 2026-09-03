@@ -1,6 +1,6 @@
 package org.ecma.fougere.service;
 
-import jakarta.validation.Valid;
+import org.bson.types.ObjectId;
 import org.ecma.fougere.domain.Candidate;
 
 import java.util.List;
@@ -16,5 +16,5 @@ public interface CandidateService {
 
     Optional<Candidate> updateCandidate(Candidate candidate);
 
-    Optional<Candidate> getCandidateById(String id);
+    Optional<Candidate> getCandidateById(ObjectId id);
 }

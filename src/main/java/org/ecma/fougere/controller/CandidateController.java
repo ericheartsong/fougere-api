@@ -32,7 +32,10 @@ public class CandidateController {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") String id) {
-        return service.getCandidateById(id)
+        if (!ObjectId.isValid(id)) {
+            throw new BadRequestException("CANDIDATE-1000");
+        }
+        return service.getCandidateById(new ObjectId(id))
                 .map(candidate -> Response.ok(candidate).build()) // Si présent : 200 OK avec l'objet
                 .orElseGet(() -> Response.status(Response.Status.NOT_FOUND).build());
     }

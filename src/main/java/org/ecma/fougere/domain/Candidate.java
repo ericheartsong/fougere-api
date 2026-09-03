@@ -63,7 +63,6 @@ public class Candidate extends PanacheMongoEntity {
     @Email(message = "CANDIDATE-0010")
     String email;
 
-
     @URL(message = "CANDIDATE-0030")
     @Size(min=0, max = 255, message = "CANDIDATE-0150")
     String urlProfile;
@@ -77,7 +76,6 @@ public class Candidate extends PanacheMongoEntity {
     public List<MediaLink> getLinks() {
         return links;
     }
-
     public void setLinks(List<MediaLink> links) {
         this.links = links;
     }
@@ -85,7 +83,6 @@ public class Candidate extends PanacheMongoEntity {
     public String getBiography() {
         return biography;
     }
-
     public void setBiography(String biography) {
         this.biography = biography;
     }
@@ -93,7 +90,6 @@ public class Candidate extends PanacheMongoEntity {
     public String getUrlProfile() {
         return urlProfile;
     }
-
     public void setUrlProfile(String urlProfile) {
         this.urlProfile = urlProfile;
     }
@@ -101,7 +97,6 @@ public class Candidate extends PanacheMongoEntity {
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
@@ -109,7 +104,6 @@ public class Candidate extends PanacheMongoEntity {
     public String getDisplayName() {
         return displayName;
     }
-
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
@@ -117,7 +111,6 @@ public class Candidate extends PanacheMongoEntity {
     public String getUsername() {
         return username;
     }
-
     public void setUsername(String userName) {
         this.username = userName;
     }
@@ -125,7 +118,6 @@ public class Candidate extends PanacheMongoEntity {
     public String getUuid() {
         return uuid;
     }
-
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
