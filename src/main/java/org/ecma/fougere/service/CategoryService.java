@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface CategoryService {
 
-    Optional<Category> getCategory(String idCategory);
+    Optional<Category> getCategoryByCode(String codeCategory);
     List<Category> getAll();
 }

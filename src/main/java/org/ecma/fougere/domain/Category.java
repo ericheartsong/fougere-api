@@ -38,12 +38,4 @@ public class Category extends PanacheMongoEntity {
         this.description = description;
     }
 
-    // Cette méthode va s'exécuter automatiquement au démarrage de l'application
-    void onStart(@Observes StartupEvent ev) {
-        // Crée l'index unique sur "codeUnique" s'il n'existe pas déjà
-        mongoCollection().createIndex(
-                Indexes.ascending("code"),
-                new IndexOptions().unique(true)
-        );
-    }
 }
