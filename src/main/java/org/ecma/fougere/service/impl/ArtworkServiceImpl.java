@@ -23,6 +23,12 @@ public class ArtworkServiceImpl implements ArtworkService {
     }
 
     @Override
+    public List<Artwork> getFiltered(String name) {
+        String regexPattern = "(?i).*" + name + ".*";
+        return Artwork.list("name", java.util.regex.Pattern.compile(regexPattern));
+    }
+
+    @Override
     public Optional<Artwork> createArtwork(Artwork artwork) {
         if (artwork.id != null) {
             return Optional.empty();

@@ -32,9 +32,13 @@ public class ArtworkController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Artwork> getAll() {
-        // Panache fournit la méthode listAll() automatiquement
-        return service.getAll();
+    public List<Artwork> getArtworks(@QueryParam("name") String name) {
+        if (name != null && !name.trim().isEmpty()) {
+            return service.getFiltered(name);
+        } else {
+            // Panache fournit la méthode listAll() automatiquement
+            return service.getAll();
+        }
     }
 
     @POST

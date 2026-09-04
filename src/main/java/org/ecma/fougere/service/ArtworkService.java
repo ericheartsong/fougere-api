@@ -17,4 +17,6 @@ public interface ArtworkService {
     Optional<Artwork> getArtworkById(ObjectId id);
 
     List<Artwork> getAll();
+
+    List<Artwork> getFiltered(String name);
 }
