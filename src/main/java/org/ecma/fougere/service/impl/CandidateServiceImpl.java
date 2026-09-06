@@ -2,14 +2,25 @@ package org.ecma.fougere.service.impl;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
+import org.ecma.fougere.domain.AvatarInfo;
 import org.ecma.fougere.domain.Candidate;
 import org.ecma.fougere.service.CandidateService;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @ApplicationScoped
 public class CandidateServiceImpl implements CandidateService {
+
+    private static final String K_WORLD_API_SL = "https://world.secondlife.com/resident/";
+    private static final String K_PREFIX_URL_PROFILE = "https://picture-service.secondlife.com/";
+    private static final String K_SUFFIX_URL_PROFILE = "/320x240.jpg";
 
     @Override
     public Optional<Candidate> getCandidateByUuid(String uuid) {
@@ -25,6 +36,46 @@ public class CandidateServiceImpl implements CandidateService {
     @Override
     public List<Candidate> getAll() {
         return Candidate.listAll();
+    }
+
+    @Override
+    public List<Candidate> getFiltered(String name) {
+        String regexPattern = "(?i).*" + name + ".*";
+        return Candidate.list("name", java.util.regex.Pattern.compile(regexPattern));
+    }
+
+    @Override
+    public Optional<AvatarInfo> getCandidateInfoByUuid(String uuid) throws Exception {
+        AvatarInfo info = new AvatarInfo();
+
+        info.setUuid(uuid);
+        String body = callAPISL(uuid);
+
+        // Récupération de l'url de profil
+        Pattern pattern = Pattern.compile("<meta name=\"imageid\" content=\"([^\"]+)\">");
+        Matcher matcher = pattern.matcher(body);
+
+        if (matcher.find()) {
+            info.setUrlProfile(K_PREFIX_URL_PROFILE.concat( matcher.group(1)).concat(K_SUFFIX_URL_PROFILE));
+        } else {
+            info.setUrlProfile(null);
+        }
+
+        // Récupération des username et display name
+        Pattern pattern2 = Pattern.compile("<title>(.+?)\\s*\\((.+?)\\)</title>");
+        Matcher matcher2 = pattern2.matcher(body);
+
+        if (matcher2.find()) {
+            // Le premier groupe (.+?) capture ce qui précède la parenthèse
+            info.setDisplayName(matcher2.group(1).trim());
+            // Le deuxième groupe (.+?) capture ce qui est dans la parenthèse
+            info.setUserName(matcher2.group(2).trim());
+        } else {
+            info.setDisplayName(null);
+            info.setUserName(null);
+        }
+
+        return Optional.of(info);
     }
 
     @Override
@@ -49,6 +100,17 @@ public class CandidateServiceImpl implements CandidateService {
         } else {
             return Optional.empty();
         }
+    }
+
+    private String callAPISL(String uuid) throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(K_WORLD_API_SL.concat(uuid)))
+                    .GET()
+                    .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return response.body();
     }
 
 }

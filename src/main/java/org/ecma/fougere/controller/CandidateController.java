@@ -42,9 +42,28 @@ public class CandidateController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Candidate> getAll() {
-        // Panache fournit la méthode listAll() automatiquement
-        return service.getAll();
+    public List<Candidate> getCandidates(@QueryParam("name") String name) {
+        if (name != null && !name.trim().isEmpty()) {
+            return service.getFiltered(name);
+        } else {
+            // Panache fournit la méthode listAll() automatiquement
+            return service.getAll();
+        }
+    }
+
+
+    @GET
+    @Path("/info/{uuid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCandidateInfo(@PathParam("uuid") String uuid){
+        try {
+            return service.getCandidateInfoByUuid(uuid)
+                    .map(candidate -> Response.ok(candidate).build()) // Si présent : 200 OK avec l'objet
+                    .orElseGet(() -> Response.status(Response.Status.NOT_FOUND).build());
+
+        } catch (Exception e) {
+            return Response.serverError().build();
+        }
     }
 
     @POST

@@ -17,6 +17,7 @@ public class Artwork extends PanacheMongoEntity {
     String subtitle;
 
     @Size(max = 200, message = "ARTWORK-0120")
+    @URL(message = "ARTWORK-0030")
     String urlImage;
 
     @Size(max = 500, message = "ARTWORK-0040")
