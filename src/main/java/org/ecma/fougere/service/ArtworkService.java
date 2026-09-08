@@ -4,6 +4,7 @@ import org.bson.types.ObjectId;
 import org.ecma.fougere.domain.Artwork;
 import org.ecma.fougere.domain.Candidate;
 import org.ecma.fougere.domain.Category;
+import org.ecma.fougere.domain.DomainIndicators;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,4 +20,6 @@ public interface ArtworkService {
     List<Artwork> getAll();
 
     List<Artwork> getFiltered(String name);
+
+    Optional<DomainIndicators> getArtworkIndicators();
 }

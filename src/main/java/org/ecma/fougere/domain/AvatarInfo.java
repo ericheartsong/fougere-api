@@ -3,7 +3,7 @@ package org.ecma.fougere.domain;
 public class AvatarInfo {
 
     String uuid;
-    String userName;
+    String username;
     String displayName;
     String urlProfile;
 
@@ -15,12 +15,12 @@ public class AvatarInfo {
         this.uuid = uuid;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String userName) {
+        this.username = userName;
     }
 
     public String getDisplayName() {

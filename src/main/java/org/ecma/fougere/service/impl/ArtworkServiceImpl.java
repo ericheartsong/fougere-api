@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
 import org.ecma.fougere.domain.Artwork;
 import org.ecma.fougere.domain.Candidate;
+import org.ecma.fougere.domain.DomainIndicators;
 import org.ecma.fougere.service.ArtworkService;
 
 import java.util.List;
@@ -29,7 +30,15 @@ public class ArtworkServiceImpl implements ArtworkService {
     }
 
     @Override
+    public Optional<DomainIndicators> getArtworkIndicators() {
+        DomainIndicators ind = new DomainIndicators();
+        ind.setNbElements(Artwork.count());
+        return Optional.of(ind);
+    }
+
+    @Override
     public Optional<Artwork> createArtwork(Artwork artwork) {
+        artwork.setName(artwork.getName().trim());
         if (artwork.id != null) {
             return Optional.empty();
         }

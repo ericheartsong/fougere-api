@@ -44,11 +44,12 @@ public class Candidate extends PanacheMongoEntity {
         }
     }
 
-    @NotBlank(message = "CANDIDATE-0001")
+
     @Pattern(
             regexp = "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             message = "CANDIDATE-0020"
     )
+    @NotBlank(message = "CANDIDATE-0001")
     String uuid;
 
     @NotBlank(message = "CANDIDATE-0001")

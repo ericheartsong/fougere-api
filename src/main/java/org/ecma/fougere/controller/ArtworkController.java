@@ -63,4 +63,13 @@ public class ArtworkController {
                 .map(updatedObject -> Response.ok(updatedObject).build())
                 .orElseGet(() -> Response.status(Response.Status.NOT_FOUND).build());
     }
+
+    @GET
+    @Path("/indicators")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getIndicators() {
+        return service.getArtworkIndicators()
+                .map(domainIndicator -> Response.ok(domainIndicator).build()) // Si présent : 200 OK avec l'objet
+                .orElseGet(() -> Response.status(Response.Status.NOT_FOUND).build());
+    }
 }

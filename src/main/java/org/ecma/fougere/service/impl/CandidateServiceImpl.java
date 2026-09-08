@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
 import org.ecma.fougere.domain.AvatarInfo;
 import org.ecma.fougere.domain.Candidate;
+import org.ecma.fougere.domain.DomainIndicators;
 import org.ecma.fougere.service.CandidateService;
 
 import java.net.URI;
@@ -56,7 +57,7 @@ public class CandidateServiceImpl implements CandidateService {
         Matcher matcher = pattern.matcher(body);
 
         if (matcher.find()) {
-            info.setUrlProfile(K_PREFIX_URL_PROFILE.concat( matcher.group(1)).concat(K_SUFFIX_URL_PROFILE));
+            info.setUrlProfile(K_PREFIX_URL_PROFILE.concat(matcher.group(1)).concat(K_SUFFIX_URL_PROFILE));
         } else {
             info.setUrlProfile(null);
         }
@@ -69,13 +70,30 @@ public class CandidateServiceImpl implements CandidateService {
             // Le premier groupe (.+?) capture ce qui précède la parenthèse
             info.setDisplayName(matcher2.group(1).trim());
             // Le deuxième groupe (.+?) capture ce qui est dans la parenthèse
-            info.setUserName(matcher2.group(2).trim());
+            info.setUsername(matcher2.group(2).trim());
         } else {
-            info.setDisplayName(null);
-            info.setUserName(null);
+
+            Pattern pattern3 = Pattern.compile("<title>(.+?)</title>");
+            Matcher matcher3 = pattern3.matcher(body);
+            if (matcher3.find()) {
+                // Le premier groupe (.+?) capture ce qui précède la parenthèse
+                info.setDisplayName(matcher3.group(1).trim());
+                // Le deuxième groupe (.+?) capture ce qui est dans la parenthèse
+                info.setUsername(matcher3.group(1).trim());
+            } else{
+                info.setDisplayName(null);
+                info.setUsername(null);
+            }
         }
 
         return Optional.of(info);
+    }
+
+    @Override
+    public Optional<DomainIndicators> getCandidateIndicators() {
+        DomainIndicators ind = new DomainIndicators();
+        ind.setNbElements(Candidate.count());
+        return Optional.of(ind);
     }
 
     @Override

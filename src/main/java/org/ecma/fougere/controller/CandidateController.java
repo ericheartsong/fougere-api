@@ -29,6 +29,15 @@ public class CandidateController {
     }
 
     @GET
+    @Path("/indicators")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getIndicators() {
+        return service.getCandidateIndicators()
+                .map(domainIndicator -> Response.ok(domainIndicator).build()) // Si présent : 200 OK avec l'objet
+                .orElseGet(() -> Response.status(Response.Status.NOT_FOUND).build());
+    }
+
+    @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(@PathParam("id") String id) {
