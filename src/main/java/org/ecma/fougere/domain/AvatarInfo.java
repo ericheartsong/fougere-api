@@ -1,5 +1,8 @@
 package org.ecma.fougere.domain;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
+@RegisterForReflection
 public class AvatarInfo {
 
     String uuid;
