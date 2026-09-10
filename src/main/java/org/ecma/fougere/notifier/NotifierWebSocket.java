@@ -8,6 +8,8 @@ import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.time.Duration;
+
 @WebSocket(path = "/notification")
 @ApplicationScoped
 public class NotifierWebSocket implements Notifier {
@@ -27,7 +29,13 @@ public class NotifierWebSocket implements Notifier {
 
         welcomeMsg.setCodeTypeMessage(NotificationMessage.codeTypeMessage.HANDSHAKE.name());
         welcomeMsg.setConnectionId(connection.id());
-        return connection.sendText(objectMapper.writeValueAsString(welcomeMsg));
+        String jsonMessage = objectMapper.writeValueAsString(welcomeMsg);
+
+        // CORRECTIF PRODUCTION : On attend 100ms que Render stabilise la ligne
+        // avant de pousser le premier message de Handshake
+        return Uni.createFrom().item(jsonMessage)
+                .onItem().delayIt().by(Duration.ofMillis(100))
+                .chain(msg -> connection.sendText(msg));
     }
 
     @OnClose
