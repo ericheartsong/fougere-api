@@ -1,5 +1,6 @@
 package org.ecma.fougere.controller;
 
+import io.smallrye.common.annotation.RunOnVirtualThread;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -23,6 +24,8 @@ public class CategoryController {
     @GET
     @Path("/{code}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RunOnVirtualThread
+
     public Response getById(@PathParam("code") String codeCategory) {
         return service.getCategoryByCode(codeCategory)
                 .map(category -> Response.ok(category).build()) // Si présent : 200 OK avec l'objet
@@ -31,6 +34,7 @@ public class CategoryController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @RunOnVirtualThread
     public List<Category> getAll() {
         // Panache fournit la méthode listAll() automatiquement
         return service.getAll();

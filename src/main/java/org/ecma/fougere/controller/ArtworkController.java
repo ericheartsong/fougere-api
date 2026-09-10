@@ -1,5 +1,6 @@
 package org.ecma.fougere.controller;
 
+import io.smallrye.common.annotation.RunOnVirtualThread;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -21,6 +22,7 @@ public class ArtworkController {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RunOnVirtualThread
     public Response getById(@PathParam("id") String id) {
         if (!ObjectId.isValid(id)) {
             throw new BadRequestException("ARTWORK-1000");
@@ -32,6 +34,8 @@ public class ArtworkController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @RunOnVirtualThread
+
     public List<Artwork> getArtworks(@QueryParam("name") String name) {
         if (name != null && !name.trim().isEmpty()) {
             return service.getFiltered(name);
@@ -43,8 +47,9 @@ public class ArtworkController {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createArtwork (@Valid Artwork artwork) {
-        return service.createArtwork(artwork)
+    @RunOnVirtualThread
+    public Response createArtwork (@Valid Artwork artwork, @HeaderParam("X-WS-CONN-ID") String connexionId) {
+        return service.createArtwork(artwork, connexionId)
                 .map(createdObject -> Response.status(Response.Status.CREATED).entity(createdObject).build())
                 .orElseGet(() -> Response.status(Response.Status.BAD_REQUEST).build());
     }
@@ -52,14 +57,15 @@ public class ArtworkController {
     @PUT
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateArtwork (@PathParam("id") String id, @Valid Artwork artwork) {
+    @RunOnVirtualThread
+    public Response updateArtwork (@PathParam("id") String id, @Valid Artwork artwork, @HeaderParam("X-WS-CONN-ID") String connexionId) {
 
         if (!ObjectId.isValid(id)) {
             throw new BadRequestException("ARTWORK-1000");
         }
 
         artwork.id = new ObjectId(id);
-        return service.updateArtwork(artwork)
+        return service.updateArtwork(artwork,connexionId)
                 .map(updatedObject -> Response.ok(updatedObject).build())
                 .orElseGet(() -> Response.status(Response.Status.NOT_FOUND).build());
     }
@@ -67,6 +73,7 @@ public class ArtworkController {
     @GET
     @Path("/indicators")
     @Produces(MediaType.APPLICATION_JSON)
+    @RunOnVirtualThread
     public Response getIndicators() {
         return service.getArtworkIndicators()
                 .map(domainIndicator -> Response.ok(domainIndicator).build()) // Si présent : 200 OK avec l'objet

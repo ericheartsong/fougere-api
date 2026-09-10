@@ -1,5 +1,6 @@
 package org.ecma.fougere.controller;
 
+import io.smallrye.common.annotation.RunOnVirtualThread;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -22,6 +23,8 @@ public class CandidateController {
     @GET
     @Path("/uuid/{uuid}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RunOnVirtualThread
+
     public Response getByUiid(@PathParam("uuid") String uuid) {
         return service.getCandidateByUuid(uuid)
                 .map(candidate -> Response.ok(candidate).build()) // Si présent : 200 OK avec l'objet
@@ -31,6 +34,8 @@ public class CandidateController {
     @GET
     @Path("/indicators")
     @Produces(MediaType.APPLICATION_JSON)
+    @RunOnVirtualThread
+
     public Response getIndicators() {
         return service.getCandidateIndicators()
                 .map(domainIndicator -> Response.ok(domainIndicator).build()) // Si présent : 200 OK avec l'objet
@@ -40,6 +45,8 @@ public class CandidateController {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RunOnVirtualThread
+
     public Response getById(@PathParam("id") String id) {
         if (!ObjectId.isValid(id)) {
             throw new BadRequestException("CANDIDATE-1000");
@@ -51,6 +58,8 @@ public class CandidateController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @RunOnVirtualThread
+
     public List<Candidate> getCandidates(@QueryParam("name") String name) {
         if (name != null && !name.trim().isEmpty()) {
             return service.getFiltered(name);
@@ -64,6 +73,8 @@ public class CandidateController {
     @GET
     @Path("/info/{uuid}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RunOnVirtualThread
+
     public Response getCandidateInfo(@PathParam("uuid") String uuid){
         try {
             return service.getCandidateInfoByUuid(uuid)
@@ -77,6 +88,8 @@ public class CandidateController {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
+    @RunOnVirtualThread
+
     public Response createCandidate (@Valid Candidate candidate) {
         return service.createCandidate(candidate)
                 .map(createdObject -> Response.status(Response.Status.CREATED).entity(createdObject).build())
@@ -86,6 +99,8 @@ public class CandidateController {
     @PUT
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RunOnVirtualThread
+
     public Response updateCandidate (@PathParam("id") String id, @Valid Candidate candidate) {
 
         if (!ObjectId.isValid(id)) {

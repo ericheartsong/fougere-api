@@ -1,10 +1,12 @@
 package org.ecma.fougere.service.impl;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 import org.ecma.fougere.domain.Artwork;
-import org.ecma.fougere.domain.Candidate;
 import org.ecma.fougere.domain.DomainIndicators;
+import org.ecma.fougere.notifier.NotificationMessage;
+import org.ecma.fougere.notifier.NotifierWebSocket;
 import org.ecma.fougere.service.ArtworkService;
 
 import java.util.List;
@@ -12,6 +14,9 @@ import java.util.Optional;
 
 @ApplicationScoped
 public class ArtworkServiceImpl implements ArtworkService {
+
+    @Inject
+    NotifierWebSocket notifierService;
 
     @Override
     public Optional<Artwork> getArtworkById(ObjectId id) {
@@ -37,17 +42,27 @@ public class ArtworkServiceImpl implements ArtworkService {
     }
 
     @Override
-    public Optional<Artwork> createArtwork(Artwork artwork) {
+    public Optional<Artwork> createArtwork(Artwork artwork, String connectionId) {
         artwork.setName(artwork.getName().trim());
         if (artwork.id != null) {
             return Optional.empty();
         }
         artwork.persist();
+
+        NotificationMessage notification =  new NotificationMessage();
+        notification.setConnectionId(connectionId);
+        notification.setCodeTypeMessage(NotificationMessage.codeTypeMessage.ARTWORK_CREATED.name());
+        notification.setId(artwork.id.toHexString());
+        notification.setMesssageInfo(artwork.getName());
+        // Reactive call to avoid latency
+        notifierService.Notifier(notification, connectionId).await().indefinitely();
+
+
         return Optional.of(artwork);
     }
 
     @Override
-    public Optional<Artwork> updateArtwork(Artwork artwork) {
+    public Optional<Artwork> updateArtwork(Artwork artwork, String connexionId) {
         if (ObjectId.isValid(artwork.id.toHexString())) {
             Artwork artworkExist = Artwork.findById(artwork.id);
             if (artworkExist != null) {
