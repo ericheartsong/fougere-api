@@ -49,11 +49,13 @@ public class ArtworkServiceImpl implements ArtworkService {
         }
         artwork.persist();
 
-        NotificationMessage notification =  new NotificationMessage();
-        notification.setConnectionId(connectionId);
-        notification.setCodeTypeMessage(NotificationMessage.codeTypeMessage.ARTWORK_CREATED.name());
-        notification.setId(artwork.id.toHexString());
-        notification.setMesssageInfo(artwork.getName());
+        NotificationMessage notification =  new NotificationMessage(
+                NotificationMessage.codeTypeMessage.ARTWORK_CREATED.name(),
+                connectionId,
+                artwork.id.toHexString(),
+                artwork.getName()
+                );
+
         // Reactive call to avoid latency
         notifierService.Notifier(notification, connectionId).await().indefinitely();
 
@@ -62,11 +64,20 @@ public class ArtworkServiceImpl implements ArtworkService {
     }
 
     @Override
-    public Optional<Artwork> updateArtwork(Artwork artwork, String connexionId) {
+    public Optional<Artwork> updateArtwork(Artwork artwork, String connectionId) {
         if (ObjectId.isValid(artwork.id.toHexString())) {
             Artwork artworkExist = Artwork.findById(artwork.id);
             if (artworkExist != null) {
                 artwork.update();
+
+                NotificationMessage notification =  new NotificationMessage(
+                        NotificationMessage.codeTypeMessage.ARTWORK_UPDATED.name(),
+                        connectionId,
+                        artwork.id.toHexString(),
+                        artwork.getName()
+                );
+                notifierService.Notifier(notification, connectionId).await().indefinitely();
+
                 return Optional.of(artwork);
             } else  {
                 return Optional.empty();

@@ -7,13 +7,17 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 import org.ecma.fougere.domain.Artwork;
+import org.ecma.fougere.notifier.NotifierWebSocket;
 import org.ecma.fougere.service.ArtworkService;
+import org.jboss.logging.Logger;
 
 import java.util.List;
 
 @Path("/artwork")
 public class ArtworkController {
     private final ArtworkService service;
+
+    private static final Logger LOG = Logger.getLogger(ArtworkController.class);
 
     public ArtworkController(ArtworkService service) {
         this.service = service;
@@ -35,8 +39,8 @@ public class ArtworkController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @RunOnVirtualThread
-
     public List<Artwork> getArtworks(@QueryParam("name") String name) {
+        LOG.info("=== APPEL API All artworks ===");
         if (name != null && !name.trim().isEmpty()) {
             return service.getFiltered(name);
         } else {

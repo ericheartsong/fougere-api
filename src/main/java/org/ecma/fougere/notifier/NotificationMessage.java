@@ -1,15 +1,33 @@
 package org.ecma.fougere.notifier;
 
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
 
+@RegisterForReflection
 public class NotificationMessage {
 
     public enum codeTypeMessage {HANDSHAKE,
-                                 ARTWORK_CREATED}
+                                 ARTWORK_CREATED,
+                                 ARTWORK_UPDATED}
+
     private String codeTypeMessage;
     private String connectionId;
     private String id;
     private String messsageInfo;
+
+    public NotificationMessage() {
+        super();
+    }
+
+    public NotificationMessage (String codeTypeMessage,
+                                String connectionId,
+                                String id,
+                                String messageInfo) {
+        setCodeTypeMessage(codeTypeMessage);
+        setConnectionId(connectionId);
+        setId(id);
+        setMessageInfo(messageInfo);
+    }
 
     public String getCodeTypeMessage() {
         return codeTypeMessage;
@@ -32,11 +50,11 @@ public class NotificationMessage {
         this.id = id;
     }
 
-    public String getMesssageInfo() {
+    public String getMessageInfo() {
         return messsageInfo;
     }
 
-    public void setMesssageInfo(String messsageInfo) {
-        this.messsageInfo = messsageInfo;
+    public void setMessageInfo(String messageInfo) {
+        this.messsageInfo = messageInfo;
     }
 }
