@@ -10,6 +10,7 @@ import org.ecma.fougere.notifier.NotifierWebSocket;
 import org.ecma.fougere.service.ArtworkService;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -51,10 +52,9 @@ public class ArtworkServiceImpl implements ArtworkService {
 
         NotificationMessage notification =  new NotificationMessage(
                 NotificationMessage.codeTypeMessage.ARTWORK_CREATED.name(),
-                connectionId,
+                Objects.toString(connectionId,""),
                 artwork.id.toHexString(),
-                artwork.getName()
-                );
+                Objects.toString(artwork.getName(),""));
 
         // Reactive call to avoid latency
         notifierService.Notifier(notification, connectionId).await().indefinitely();
@@ -72,10 +72,9 @@ public class ArtworkServiceImpl implements ArtworkService {
 
                 NotificationMessage notification =  new NotificationMessage(
                         NotificationMessage.codeTypeMessage.ARTWORK_UPDATED.name(),
-                        connectionId,
+                        Objects.toString(connectionId,""),
                         artwork.id.toHexString(),
-                        artwork.getName()
-                );
+                        Objects.toString(artwork.getName(),""));
                 notifierService.Notifier(notification, connectionId).await().indefinitely();
 
                 return Optional.of(artwork);

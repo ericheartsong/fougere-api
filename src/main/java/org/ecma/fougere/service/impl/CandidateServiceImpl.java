@@ -1,10 +1,13 @@
 package org.ecma.fougere.service.impl;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 import org.ecma.fougere.domain.AvatarInfo;
 import org.ecma.fougere.domain.Candidate;
 import org.ecma.fougere.domain.DomainIndicators;
+import org.ecma.fougere.notifier.NotificationMessage;
+import org.ecma.fougere.notifier.NotifierWebSocket;
 import org.ecma.fougere.service.CandidateService;
 
 import java.net.URI;
@@ -12,6 +15,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,6 +26,9 @@ public class CandidateServiceImpl implements CandidateService {
     private static final String K_WORLD_API_SL = "https://world.secondlife.com/resident/";
     private static final String K_PREFIX_URL_PROFILE = "https://picture-service.secondlife.com/";
     private static final String K_SUFFIX_URL_PROFILE = "/320x240.jpg";
+
+    @Inject
+    NotifierWebSocket notifierService;
 
     @Override
     public Optional<Candidate> getCandidateByUuid(String uuid) {
@@ -97,20 +104,40 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
-    public Optional<Candidate> createCandidate(Candidate candidate) {
+    public Optional<Candidate> createCandidate(Candidate candidate,String connectionId) {
         if (candidate.id != null) {
             return Optional.empty();
         }
         candidate.persist();
+
+        NotificationMessage notification =  new NotificationMessage(
+                NotificationMessage.codeTypeMessage.CANDIDATE_CREATED.name(),
+                Objects.toString(connectionId,""),
+                candidate.id.toHexString(),
+                Objects.toString(candidate.getDisplayName(), ""));
+
+        // Reactive call to avoid latency
+        notifierService.Notifier(notification, connectionId).await().indefinitely();
+
         return Optional.of(candidate);
     }
 
     @Override
-    public Optional<Candidate> updateCandidate(Candidate candidate) {
+    public Optional<Candidate> updateCandidate(Candidate candidate, String connectionId) {
         if (ObjectId.isValid(candidate.id.toHexString())) {
             Candidate candidateExist = Candidate.findById(candidate.id);
             if (candidateExist != null) {
                 candidate.update();
+
+                NotificationMessage notification =  new NotificationMessage(
+                        NotificationMessage.codeTypeMessage.CANDIDATE_UPDATED.name(),
+                        Objects.toString(connectionId,""),
+                        candidate.id.toHexString(),
+                        Objects.toString(candidate.getDisplayName(), ""));
+
+                // Reactive call to avoid latency
+                notifierService.Notifier(notification, connectionId).await().indefinitely();
+
                 return Optional.of(candidate);
             } else  {
                 return Optional.empty();

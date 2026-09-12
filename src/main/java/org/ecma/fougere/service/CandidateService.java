@@ -14,9 +14,9 @@ public interface CandidateService {
     Optional<Candidate> getCandidateByUuid(String uuid);
     List<Candidate> getAll();
 
-    Optional<Candidate> createCandidate(Candidate candidate);
+    Optional<Candidate> createCandidate(Candidate candidate, String connectionId);
 
-    Optional<Candidate> updateCandidate(Candidate candidate);
+    Optional<Candidate> updateCandidate(Candidate candidate, String connectionId);
 
     Optional<Candidate> getCandidateById(ObjectId id);
 

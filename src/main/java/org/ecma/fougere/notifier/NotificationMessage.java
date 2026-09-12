@@ -8,7 +8,9 @@ public class NotificationMessage {
 
     public enum codeTypeMessage {HANDSHAKE,
                                  ARTWORK_CREATED,
-                                 ARTWORK_UPDATED}
+                                 ARTWORK_UPDATED,
+                                 CANDIDATE_CREATED,
+                                 CANDIDATE_UPDATED}
 
     private String codeTypeMessage;
     private String connectionId;
